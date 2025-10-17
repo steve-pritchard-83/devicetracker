@@ -1,0 +1,25 @@
+{
+  "name": "gday-test-device-tracker",
+  "version": "1.0.0",
+  "description": "G'day Test Device Checkout Tracker - Single-file web application",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "device-tracker",
+    "checkout",
+    "sqlite",
+    "single-file"
+  ],
+  "author": "G'day Group",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "postgres": "^3.4.4"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

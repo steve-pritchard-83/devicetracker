@@ -1,0 +1,24 @@
+# Database
+devices.db
+devices.db-journal
+*.db
+*.db-shm
+*.db-wal
+
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+
+.vercel
