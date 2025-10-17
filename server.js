@@ -11,7 +11,7 @@ const postgres = require('postgres');
 
 // Initialize Postgres connection
 const sql = postgres(process.env.DATABASE_URL || process.env.POSTGRES_URL, {
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  ssl: 'require',  // Supabase requires SSL
   max: 10,
   idle_timeout: 20,
   connect_timeout: 10,
@@ -172,24 +172,34 @@ const HTML_TEMPLATE = `
     
     header {
       background: white;
-      padding: 20px;
-      margin-bottom: 30px;
+      padding: 20px 0;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      margin-bottom: 30px;
+    }
+    
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
       display: flex;
       align-items: center;
-      gap: 20px;
-      flex-wrap: wrap;
+      justify-content: space-between;
     }
     
     .logo {
       height: 60px;
       width: auto;
+      order: 2;
     }
     
     h1 {
       font-size: 28px;
       font-weight: 600;
       color: #2c2c2c;
+      order: 1;
     }
     
     .table-container {
@@ -197,11 +207,13 @@ const HTML_TEMPLATE = `
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       overflow: hidden;
+      margin-bottom: 20px;
     }
     
     table {
       width: 100%;
-      border-collapse: collapse;
+      border-collapse: separate;
+      border-spacing: 0;
     }
     
     thead {
@@ -225,10 +237,15 @@ const HTML_TEMPLATE = `
     
     tbody tr {
       transition: background-color 0.2s ease;
+      background: white;
     }
     
     tbody tr:hover {
       background-color: #f9f9f9;
+    }
+    
+    tbody tr:last-child td {
+      border-bottom: none;
     }
     
     .status-badge {
@@ -314,9 +331,12 @@ const HTML_TEMPLATE = `
       }
       
       header {
-        padding: 15px;
-        justify-content: center;
-        text-align: center;
+        padding: 15px 0;
+      }
+      
+      .header-content {
+        padding: 0 15px;
+        flex-direction: row;
       }
       
       .logo {
@@ -390,8 +410,10 @@ const HTML_TEMPLATE = `
 </head>
 <body>
   <header>
-    <img src="https://careers.gdaygroup.com.au/files/images/_450x450_fit_center-center_none/logo_gday-group.webp" alt="G'day Group Logo" class="logo">
-    <h1>G'day Test Device Tracker</h1>
+    <div class="header-content">
+      <h1>G'day Test Device Tracker</h1>
+      <img src="https://careers.gdaygroup.com.au/files/images/_450x450_fit_center-center_none/logo_gday-group.webp" alt="G'day Group Logo" class="logo">
+    </div>
   </header>
   
   <div class="container">
