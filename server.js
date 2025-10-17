@@ -202,50 +202,49 @@ const HTML_TEMPLATE = `
       order: 1;
     }
     
-    .table-container {
+    .devices-grid {
+      display: grid;
+      gap: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    }
+    
+    .device-card {
       background: white;
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      overflow: hidden;
-      margin-bottom: 20px;
+      padding: 20px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
     
-    table {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
+    .device-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
     
-    thead {
-      background: #2c2c2c;
-      color: white;
+    .device-field {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f0f0;
     }
     
-    th {
-      padding: 15px;
-      text-align: left;
+    .device-field:last-child {
+      border-bottom: none;
+    }
+    
+    .field-label {
       font-weight: 600;
-      font-size: 14px;
+      color: #666;
+      font-size: 13px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
     
-    td {
-      padding: 15px;
-      border-bottom: 1px solid #eee;
-    }
-    
-    tbody tr {
-      transition: background-color 0.2s ease;
-      background: white;
-    }
-    
-    tbody tr:hover {
-      background-color: #f9f9f9;
-    }
-    
-    tbody tr:last-child td {
-      border-bottom: none;
+    .field-value {
+      font-size: 15px;
+      color: #2c2c2c;
+      text-align: right;
     }
     
     .status-badge {
@@ -369,40 +368,13 @@ const HTML_TEMPLATE = `
         padding: 4px 8px;
       }
       
-      /* Stack table on very small screens */
       @media (max-width: 480px) {
-        table, thead, tbody, th, td, tr {
-          display: block;
+        .devices-grid {
+          grid-template-columns: 1fr;
         }
         
-        thead tr {
-          position: absolute;
-          top: -9999px;
-          left: -9999px;
-        }
-        
-        tr {
-          margin-bottom: 15px;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-        }
-        
-        td {
-          border: none;
-          position: relative;
-          padding-left: 50%;
-          text-align: right;
-        }
-        
-        td:before {
-          position: absolute;
-          left: 10px;
-          width: 45%;
-          padding-right: 10px;
-          white-space: nowrap;
-          text-align: left;
-          font-weight: 600;
-          content: attr(data-label);
+        .device-card {
+          padding: 15px;
         }
       }
     }
@@ -418,23 +390,8 @@ const HTML_TEMPLATE = `
   
   <div class="container">
     <div id="error-container"></div>
-    <div class="table-container">
-      <table id="devices-table">
-        <thead>
-          <tr>
-            <th>Device Name</th>
-            <th>Borrower</th>
-            <th>Date Checked Out</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody id="devices-tbody">
-          <tr>
-            <td colspan="5" class="loading">Loading devices...</td>
-          </tr>
-        </tbody>
-      </table>
+    <div id="devices-grid" class="devices-grid">
+      <div class="loading">Loading devices...</div>
     </div>
   </div>
   
@@ -457,16 +414,16 @@ const HTML_TEMPLATE = `
       }
     }
     
-    // Render devices in table
+    // Render devices as cards
     function renderDevices(devices) {
-      const tbody = document.getElementById('devices-tbody');
+      const grid = document.getElementById('devices-grid');
       
       if (devices.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="empty-cell">No devices found</td></tr>';
+        grid.innerHTML = '<div class="empty-cell">No devices found</div>';
         return;
       }
       
-      tbody.innerHTML = devices.map(device => {
+      grid.innerHTML = devices.map(device => {
         const isAvailable = device.status === 'Available';
         const borrower = device.borrower || '<span class="empty-cell">—</span>';
         const date = device.checked_out_date 
@@ -480,13 +437,28 @@ const HTML_TEMPLATE = `
           : \`<button class="btn-checkin" onclick="checkinDevice('\${device.name}')">Check In</button>\`;
         
         return \`
-          <tr>
-            <td data-label="Device Name">\${device.name}</td>
-            <td data-label="Borrower">\${borrower}</td>
-            <td data-label="Date Checked Out">\${date}</td>
-            <td data-label="Status"><span class="status-badge \${statusClass}">\${device.status}</span></td>
-            <td data-label="Action">\${actionButton}</td>
-          </tr>
+          <div class="device-card">
+            <div class="device-field">
+              <span class="field-label">Device Name</span>
+              <span class="field-value">\${device.name}</span>
+            </div>
+            <div class="device-field">
+              <span class="field-label">Borrower</span>
+              <span class="field-value">\${borrower}</span>
+            </div>
+            <div class="device-field">
+              <span class="field-label">Date Checked Out</span>
+              <span class="field-value">\${date}</span>
+            </div>
+            <div class="device-field">
+              <span class="field-label">Status</span>
+              <span class="field-value"><span class="status-badge \${statusClass}">\${device.status}</span></span>
+            </div>
+            <div class="device-field">
+              <span class="field-label">Action</span>
+              <span class="field-value">\${actionButton}</span>
+            </div>
+          </div>
         \`;
       }).join('');
     }
